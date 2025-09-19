@@ -1,0 +1,72 @@
+---
+// ResultsSection component for displaying experiment results
+import BarChart from "./BarChart.astro";
+
+// Sample data that matches the image you showed
+const publicBenchmarkData = {
+	categories: ["Google Robot VM", "Google Robot VA", "WidowX VM", "Libero"],
+	series: [
+		{
+			name: "GR00T",
+			values: [35.2, 44.5, 61.9, 93.9],
+			color: "#e2e8f0", // Light gray
+		},
+		{
+			name: "π0​",
+			values: [58.8, 54.8, 27.1, 94.2],
+			color: "#94a3b8", // Medium gray
+		},
+		{
+			name: "InternVLA-M1",
+			values: [80.7, 76.0, 71.7, 95.9],
+			color: "#475569", // Dark gray/blue
+		},
+	],
+};
+const simImprovementData = {
+	categories: ["Google Robot VM", "Google Robot VA", "WidowX VM", "Libero"],
+	series: [
+		{
+			name: "Vanilla VLA",
+			values: [66.1, 63.5, 54.7, 91.6],
+			color: "#e2e8f0", // Light gray
+		},
+		{
+			name: "InternVLA-M1",
+			values: [80.7, 76.0, 71.7, 95.9],
+			color: "#475569", // Dark gray/blue
+		},
+	],
+};
+---
+
+<section class="py-8">
+	<!-- Large-scale Pick and Place in GenManip -->
+
+	<!-- Cluster Pick and Place -->
+
+	<!-- Reasoning -->
+	<div class="max-w-6xl mx-auto px-8">
+		<h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+			Experimental Results
+		</h2>
+		<p class="text-gray-600 text-center mb-8 text-lg">
+			InternVLA-M1 demonstrates superior performance across various
+			challenging scenarios
+		</p>
+
+		<BarChart
+			title="Performance Comparison on Simpler Env and Libero Benchmark"
+			data={publicBenchmarkData}
+			yAxisLabel="Success Rate (%)"
+		/>
+		<BarChart
+			title="Effects of Spatially Guided VLA Training"
+			data={simImprovementData}
+			yAxisLabel="Success Rate (%)"
+		/>
+	</div>
+	<!-- Simpler Env -->
+
+	<!-- Intermediate Traj Video -->
+</section>

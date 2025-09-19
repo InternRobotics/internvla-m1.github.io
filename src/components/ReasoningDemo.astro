@@ -1,0 +1,113 @@
+---
+// ReasoningDemo component using VideoCarousel directly
+
+import VideoCarousel from "./VideoCarousel.astro";
+import { getAssetPath } from "../utils/assetPath";
+
+const simulationDemoVideos = [
+	{
+		title: "",
+		src: getAssetPath("sim-demo/sim.mp4"),
+		description: "",
+		autoplay: true,
+	},
+];
+// Video metadata configuration
+const pickAndPlaceDemoVideos = [
+	{
+		title: "",
+		src: getAssetPath("pnp-demo/C0660_4x.mp4"),
+		description: "",
+		autoplay: true,
+	},
+	{
+		title: "",
+		src: getAssetPath("pnp-demo/C0663_4x.mp4"),
+		description: "",
+		autoplay: false,
+	},
+	{
+		title: "",
+		src: getAssetPath("pnp-demo/C0666_4x.mp4"),
+		description: "",
+		autoplay: false,
+	},
+	{
+		title: "",
+		src: getAssetPath("pnp-demo/C0671_4x.mp4"),
+		description: "",
+		autoplay: false,
+	},
+	{
+		title: "",
+		src: getAssetPath("pnp-demo/C0672_4x.mp4"),
+		description: "",
+		autoplay: false,
+	},
+	{
+		title: "",
+		src: getAssetPath("pnp-demo/C0673_4x.mp4"),
+		description: "",
+		autoplay: false,
+	},
+	{
+		title: "",
+		src: getAssetPath("pnp-demo/C0656_4x.mp4"),
+		description: "",
+		autoplay: false,
+	},
+];
+// Video metadata configuration
+const longHorizonDemoVideos = [
+	{
+		title: "Make Sandwich",
+		src: getAssetPath("long-horizon-demo/make-sandwich.mp4"),
+		autoplay: false,
+	},
+	{
+		title: "Purchase Goods",
+		src: getAssetPath("long-horizon-demo/purchase-goods.mp4"),
+		autoplay: false,
+	},
+	{
+		title: "Sort Objects",
+		src: getAssetPath("long-horizon-demo/sort-objects.mp4"),
+		autoplay: false,
+	},
+	{
+		title: "Sort to Drawer",
+		src: getAssetPath("long-horizon-demo/sort-to-drawer.mp4"),
+		autoplay: false,
+	},
+	{
+		title: "Math Calculation",
+		src: getAssetPath("long-horizon-demo/math-calculation.mp4"),
+		autoplay: true,
+	},
+];
+---
+
+<section class="bg-white rounded-lg shadow-sm p-6 mb-6 max-w-6xl mx-auto">
+	<h2 class="text-3xl font-bold text-gray-900 mb-4 text-center">Results</h2>
+	<p class="text-gray-600 text-center mb-6">
+		Watch InternVLA-M1 perform instruction-following manipulation tasks in
+		both large-scale simulated environments and real-world tasks.
+	</p>
+	<h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">
+		Instruction-Following Manipulation
+	</h3>
+	<VideoCarousel videos={simulationDemoVideos} />
+
+	<div class="my-8"></div>
+	<h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">
+		Cluttered-scene Pick-and-Place
+	</h3>
+	<VideoCarousel videos={pickAndPlaceDemoVideos} />
+
+	<div class="my-8"></div>
+
+	<h3 class="text-2xl font-bold text-gray-900 mb-4 text-center">
+		Long-horizon and Reasoning Manipulation
+	</h3>
+	<VideoCarousel videos={longHorizonDemoVideos} />
+</section>

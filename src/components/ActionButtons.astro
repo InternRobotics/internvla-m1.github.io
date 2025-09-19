@@ -1,0 +1,104 @@
+---
+// ActionButtons component for paper, code, dataset, video, and demo links
+import {
+	siArxiv,
+	siGithub,
+	siHuggingface,
+	siDatadog,
+	siYoutube,
+} from "simple-icons";
+---
+
+<style>
+	.hf-yellow {
+		color: #ffd21e;
+	}
+	.hf-yellow:hover {
+		color: #e6bc1a;
+	}
+	.dataset-blue {
+		color: #3b82f6;
+	}
+	.dataset-blue:hover {
+		color: #2563eb;
+	}
+	.video-red {
+		color: #ef4444;
+	}
+	.video-red:hover {
+		color: #dc2626;
+	}
+</style>
+
+<section>
+	<!-- Action Buttons -->
+	<div class="flex flex-wrap justify-center gap-4">
+		<a
+			href="https://github.com/InternRobotics/InternVLA-M1"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="bg-white bg-opacity-90 backdrop-blur-sm border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-opacity-100 hover:border-black hover:text-black transition-all duration-300 flex items-center gap-2 shadow-lg"
+		>
+			<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+				<path d={siGithub.path}></path>
+			</svg>
+			Code
+		</a>
+		<a
+			href="https://huggingface.co/collections/InternRobotics/internvla-m1-68c96eaebcb5867786ee6cf3"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="bg-white bg-opacity-90 backdrop-blur-sm border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-opacity-100 hover:border-black hover:text-black transition-all duration-300 flex items-center gap-2 shadow-lg"
+		>
+			<svg
+				class="w-5 h-5 hf-yellow"
+				fill="currentColor"
+				viewBox="0 0 24 24"
+			>
+				<path d={siHuggingface.path}></path>
+			</svg>
+			Model
+		</a>
+		<a
+			href="https://huggingface.co/datasets/InternRobotics/InternData-M1"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="bg-white bg-opacity-90 backdrop-blur-sm border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-opacity-100 hover:border-black hover:text-black transition-all duration-300 flex items-center gap-2 shadow-lg"
+		>
+			<svg
+				class="w-5 h-5 dataset-blue"
+				fill="currentColor"
+				viewBox="0 0 24 24"
+			>
+				<path d={siDatadog.path}></path>
+			</svg>
+			Dataset
+		</a>
+		<a
+			href="https://github.com/InternRobotics/InternVLA-M1/blob/InternVLA-M1/assets/InternVLA_M1.pdf"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="bg-white bg-opacity-90 backdrop-blur-sm border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-opacity-100 hover:border-black hover:text-black transition-all duration-300 flex items-center gap-2 shadow-lg"
+		>
+			<svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+				<path d={siArxiv.path}></path>
+			</svg>
+			Arxiv
+		</a>
+		<a
+			href="https://youtu.be/n129VDqJCk4"
+			target="_blank"
+			rel="noopener noreferrer"
+			class="bg-white bg-opacity-90 backdrop-blur-sm border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-full font-medium hover:bg-opacity-100 hover:border-black hover:text-black transition-all duration-300 flex items-center gap-2 shadow-lg"
+		>
+			<svg
+				class="w-5 h-5 video-red"
+				fill="currentColor"
+				viewBox="0 0 24 24"
+			>
+				<path d={siYoutube.path}></path>
+			</svg>
+			Video
+		</a>
+	</div>
+</section>

@@ -1,0 +1,496 @@
+---
+// DonutChart component for displaying animated donut charts
+export interface Props {
+	title?: string;
+	centerTitle?: string;
+	centerValue?: string;
+	data: {
+		inner: {
+			label: string;
+			value: number;
+			color: string;
+		}[];
+		outer: {
+			label: string;
+			value: number;
+			color: string;
+		}[];
+	};
+}
+
+const {
+	title,
+	centerTitle = "VLM Data",
+	centerValue = "~1,829K",
+	data,
+} = Astro.props;
+
+// Calculate angles for inner ring
+const innerTotal = data.inner.reduce((sum, item) => sum + item.value, 0);
+let innerCurrentAngle = 0;
+const innerSegments = data.inner.map((item) => {
+	const startAngle = innerCurrentAngle;
+	const angle = (item.value / innerTotal) * 360;
+	innerCurrentAngle += angle;
+	return {
+		...item,
+		startAngle,
+		endAngle: innerCurrentAngle,
+		percentage: ((item.value / innerTotal) * 100).toFixed(1),
+	};
+});
+
+// Calculate angles for outer ring
+const outerTotal = data.outer.reduce((sum, item) => sum + item.value, 0);
+let outerCurrentAngle = 0;
+const outerSegments = data.outer.map((item) => {
+	const startAngle = outerCurrentAngle;
+	const angle = (item.value / outerTotal) * 360;
+	outerCurrentAngle += angle;
+	return {
+		...item,
+		startAngle,
+		endAngle: outerCurrentAngle,
+		percentage: ((item.value / outerTotal) * 100).toFixed(1),
+	};
+});
+
+// Helper function to create SVG path for arc
+function createArcPath(
+	centerX: number,
+	centerY: number,
+	radius: number,
+	startAngle: number,
+	endAngle: number,
+	innerRadius: number = 0,
+) {
+	const start = polarToCartesian(centerX, centerY, radius, endAngle);
+	const end = polarToCartesian(centerX, centerY, radius, startAngle);
+	const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+
+	if (innerRadius > 0) {
+		const innerStart = polarToCartesian(
+			centerX,
+			centerY,
+			innerRadius,
+			endAngle,
+		);
+		const innerEnd = polarToCartesian(
+			centerX,
+			centerY,
+			innerRadius,
+			startAngle,
+		);
+
+		return [
+			"M",
+			start.x,
+			start.y,
+			"A",
+			radius,
+			radius,
+			0,
+			largeArcFlag,
+			0,
+			end.x,
+			end.y,
+			"L",
+			innerEnd.x,
+			innerEnd.y,
+			"A",
+			innerRadius,
+			innerRadius,
+			0,
+			largeArcFlag,
+			1,
+			innerStart.x,
+			innerStart.y,
+			"z",
+		].join(" ");
+	}
+
+	return [
+		"M",
+		centerX,
+		centerY,
+		"L",
+		start.x,
+		start.y,
+		"A",
+		radius,
+		radius,
+		0,
+		largeArcFlag,
+		0,
+		end.x,
+		end.y,
+		"z",
+	].join(" ");
+}
+
+function polarToCartesian(
+	centerX: number,
+	centerY: number,
+	radius: number,
+	angleInDegrees: number,
+) {
+	const angleInRadians = ((angleInDegrees - 90) * Math.PI) / 180.0;
+	return {
+		x: centerX + radius * Math.cos(angleInRadians),
+		y: centerY + radius * Math.sin(angleInRadians),
+	};
+}
+---
+
+<style>
+	.donut-chart-container {
+		font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+			sans-serif;
+	}
+
+	.donut-segment {
+		opacity: 0;
+		transform-origin: 50% 50%;
+		transform: scale(0);
+		transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.donut-segment.animate {
+		opacity: 1;
+		transform: scale(1);
+	}
+
+	.center-text {
+		opacity: 0;
+		transform: translateY(10px);
+		transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.center-text.animate {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	.legend-item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		font-size: 14px;
+		color: #374151;
+		padding: 4px 0;
+	}
+
+	.legend-color {
+		width: 16px;
+		height: 16px;
+		border-radius: 2px;
+		flex-shrink: 0;
+	}
+
+	.legend-section {
+		margin-bottom: 16px;
+	}
+
+	.legend-title {
+		font-size: 16px;
+		font-weight: 600;
+		color: #111827;
+		margin-bottom: 8px;
+	}
+</style>
+
+<div
+	class="donut-chart-container bg-white rounded-lg shadow-sm p-6 mb-6 max-w-6xl mx-auto"
+>
+	{
+		title && (
+			<h3 class="text-xl font-bold text-gray-900 mb-4 text-center">
+				{title}
+			</h3>
+		)
+	}
+
+	<div class="flex items-center justify-center gap-16">
+		<!-- Chart -->
+		<div class="chart-wrapper" style="width: 400px; height: 400px;">
+			<svg
+				width="100%"
+				height="100%"
+				viewBox="0 0 400 400"
+				class="chart-svg"
+			>
+				<defs>
+					<!-- Define text paths for curved text -->
+					{
+						innerSegments.map((segment, index) => {
+							const midRadius = 85;
+							const start = polarToCartesian(
+								200,
+								200,
+								midRadius,
+								segment.startAngle,
+							);
+							const end = polarToCartesian(
+								200,
+								200,
+								midRadius,
+								segment.endAngle,
+							);
+							const angleDiff =
+								segment.endAngle - segment.startAngle;
+							const largeArcFlag = angleDiff > 180 ? "1" : "0";
+							const pathData = `M ${start.x} ${start.y} A ${midRadius} ${midRadius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+							return (
+								<path
+									id={`inner-text-path-${index}`}
+									d={pathData}
+									fill="none"
+								/>
+							);
+						})
+					}
+
+					{
+						outerSegments.map((segment, index) => {
+							const midRadius = 150;
+							const start = polarToCartesian(
+								200,
+								200,
+								midRadius,
+								segment.startAngle,
+							);
+							const end = polarToCartesian(
+								200,
+								200,
+								midRadius,
+								segment.endAngle,
+							);
+							const angleDiff =
+								segment.endAngle - segment.startAngle;
+							const largeArcFlag = angleDiff > 180 ? "1" : "0";
+							const pathData = `M ${start.x} ${start.y} A ${midRadius} ${midRadius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+							return (
+								<path
+									id={`outer-text-path-${index}`}
+									d={pathData}
+									fill="none"
+								/>
+							);
+						})
+					}
+				</defs>
+
+				<!-- Outer ring segments -->
+				{
+					outerSegments.map((segment, index) => (
+						<path
+							d={createArcPath(
+								200,
+								200,
+								180,
+								segment.startAngle,
+								segment.endAngle,
+								120,
+							)}
+							fill={segment.color}
+							class="donut-segment outer-segment"
+							data-index={index}
+							data-ring="outer"
+						/>
+					))
+				}
+
+				<!-- Inner ring segments -->
+				{
+					innerSegments.map((segment, index) => (
+						<path
+							d={createArcPath(
+								200,
+								200,
+								110,
+								segment.startAngle,
+								segment.endAngle,
+								60,
+							)}
+							fill={segment.color}
+							class="donut-segment inner-segment"
+							data-index={index}
+							data-ring="inner"
+						/>
+					))
+				}
+
+				<!-- Center circle with dashed border -->
+				<circle
+					cx="200"
+					cy="200"
+					r="55"
+					fill="transparent"
+					stroke="#60a5fa"
+					stroke-width="2"
+					stroke-dasharray="8,4"
+					opacity="0.6"></circle>
+
+				<!-- Center text -->
+				<g class="center-text">
+					<text
+						x="200"
+						y="205"
+						text-anchor="middle"
+						fill="black"
+						font-size="24"
+						font-weight="700"
+					>
+						{centerTitle}
+					</text>
+					<text
+						x="200"
+						y="225"
+						text-anchor="middle"
+						fill="black"
+						font-size="20"
+						font-weight="600"
+					>
+						{centerValue}
+					</text>
+				</g>
+
+				<!-- Ring labels -->
+				{
+					innerSegments.map((segment, index) => (
+						<text
+							fill="white"
+							font-size="14"
+							font-weight="600"
+							text-anchor="middle"
+						>
+							<textPath
+								href={`#inner-text-path-${index}`}
+								startOffset="50%"
+							>
+								{segment.label}
+							</textPath>
+						</text>
+					))
+				}
+
+				{
+					outerSegments.map((segment, index) => (
+						<text
+							fill="white"
+							font-size="12"
+							font-weight="600"
+							text-anchor="middle"
+						>
+							<textPath
+								href={`#outer-text-path-${index}`}
+								startOffset="50%"
+							>
+								{segment.label}
+							</textPath>
+						</text>
+					))
+				}
+			</svg>
+		</div>
+
+		<!-- Legend -->
+		<div class="legend">
+			<!-- Inner ring legend -->
+			<div class="legend-section">
+				<div class="legend-title">VLM Training Data</div>
+				{
+					innerSegments.map((segment) => (
+						<div class="legend-item">
+							<div
+								class="legend-color"
+								style={`background-color: ${segment.color}`}
+							/>
+							<span>{segment.label}</span>
+							<span class="text-gray-500 ml-auto">
+								{segment.percentage}%
+							</span>
+						</div>
+					))
+				}
+			</div>
+
+			<!-- Outer ring legend -->
+			<div class="legend-section">
+				<div class="legend-title">Detailed Components</div>
+				{
+					outerSegments.map((segment) => (
+						<div class="legend-item">
+							<div
+								class="legend-color"
+								style={`background-color: ${segment.color}`}
+							/>
+							<span>{segment.label}</span>
+							<span class="text-gray-500 ml-auto">
+								{segment.percentage}%
+							</span>
+						</div>
+					))
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	// Animation when element comes into view
+	const observerCallback = (entries: IntersectionObserverEntry[]) => {
+		entries.forEach((entry) => {
+			if (entry.isIntersecting) {
+				const chartContainer = entry.target;
+				const outerSegments =
+					chartContainer.querySelectorAll(".outer-segment");
+				const innerSegments =
+					chartContainer.querySelectorAll(".inner-segment");
+				const centerText = chartContainer.querySelector(".center-text");
+
+				// Animate outer ring first
+				outerSegments.forEach((segment, index) => {
+					setTimeout(() => {
+						segment.classList.add("animate");
+					}, index * 200);
+				});
+
+				// Animate inner ring after outer ring
+				innerSegments.forEach((segment, index) => {
+					setTimeout(
+						() => {
+							segment.classList.add("animate");
+						},
+						outerSegments.length * 200 + index * 200,
+					);
+				});
+
+				// Animate center text last
+				setTimeout(
+					() => {
+						centerText?.classList.add("animate");
+					},
+					(outerSegments.length + innerSegments.length) * 200 + 300,
+				);
+
+				// Stop observing after animation
+				observer.unobserve(chartContainer);
+			}
+		});
+	};
+
+	const observer = new IntersectionObserver(observerCallback, {
+		threshold: 0.3,
+		rootMargin: "0px 0px -50px 0px",
+	});
+
+	// Observe all chart containers
+	document.addEventListener("DOMContentLoaded", () => {
+		document
+			.querySelectorAll(".donut-chart-container")
+			.forEach((container) => {
+				observer.observe(container);
+			});
+	});
+</script>

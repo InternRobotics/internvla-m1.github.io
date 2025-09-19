@@ -1,0 +1,32 @@
+---
+// SimDataSection component for displaying simulation data information
+import { getAssetPath } from "../utils/assetPath";
+---
+
+<section class="bg-white rounded-lg shadow-sm p-6 mb-6">
+    <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+        Simulation Data Generation
+    </h2>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <!-- Image -->
+        <div class="order-2 lg:order-1">
+            <img
+                src={getAssetPath("sim.png")}
+                alt="Simulation Data Pipeline"
+                class="w-full h-auto rounded-lg shadow-md"
+            />
+        </div>
+
+        <!-- Description -->
+        <div class="order-1 lg:order-2">
+            <p class="text-gray-700 leading-relaxed text-lg text-justify">
+                The pipeline automatically generates diverse
+                instruction-following robotic manipulation data from a large
+                asset library, incorporating intermediate representations such
+                as Box, Point, and Trajectory, which can be further converted
+                into VLM spatial grounding data.
+            </p>
+        </div>
+    </div>
+</section>

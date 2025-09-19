@@ -1,0 +1,136 @@
+---
+import "../styles/global.css";
+import Hero from "../components/Hero.astro";
+import InstitutionLogos from "../components/InstitutionLogos.astro";
+import ActionButtons from "../components/ActionButtons.astro";
+import Abstract from "../components/Abstract.astro";
+import ModelOverview from "../components/ModelOverview.astro";
+import ReasoningDemo from "../components/ReasoningDemo.astro";
+import ResultsSection from "../components/ResultsSection.astro";
+import System2Showcase from "../components/System2Showcase.astro";
+import DataDistribution from "../components/DataDistribution.astro";
+import Reference from "../components/Reference.astro";
+import SimDataSection from "../components/SimDataSection.astro";
+
+import { getAssetPath } from "../utils/assetPath";
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link
+			rel="icon"
+			type="image/svg+xml"
+			href={getAssetPath("favicon.svg")}
+		/>
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<title>
+			InternVLA-M1: Latent Spatial Grounding for Instruction-Following
+			Robotic Manipulation
+		</title>
+		<meta
+			name="description"
+			content="InternVLA-M1 research project homepage - Latent Spatial Grounding for Instruction-Following Robotic Manipulation"
+		/>
+		<style
+			define:vars={{
+				centuryGothicFont: getAssetPath("fonts/centurygothic.ttf"),
+				centuryGothicBoldFont: getAssetPath(
+					"fonts/centurygothic_bold.ttf",
+				),
+			}}
+		>
+			/* 定义本地字体 */
+			@font-face {
+				font-family: "Century Gothic";
+				src: url(var(--centuryGothicFont)) format("truetype");
+				font-weight: 400;
+				font-style: normal;
+				font-display: swap;
+			}
+
+			@font-face {
+				font-family: "Century Gothic";
+				src: url(var(--centuryGothicBoldFont)) format("truetype");
+				font-weight: 700;
+				font-style: normal;
+				font-display: swap;
+			}
+
+			* {
+				font-family: "Century Gothic", "Avant Garde", sans-serif;
+			}
+		</style>
+	</head>
+	<body class="bg-gray-100 min-h-screen">
+		<!-- Hero Section -->
+		<section
+			class="flex items-center justify-center min-h-screen relative overflow-hidden"
+		>
+			<!-- Background Video -->
+			<video
+				autoplay
+				muted
+				loop
+				playsinline
+				class="absolute inset-0 w-full h-full object-cover z-0"
+			>
+				<source src={getAssetPath("teaser.mp4")} type="video/mp4" />
+			</video>
+
+			<!-- Video Overlay -->
+			<div class="absolute inset-0 bg-black bg-opacity-40 z-10"></div>
+
+			<!-- Content -->
+			<main class="max-w-5xl mx-auto px-8 py-8 text-center relative z-20">
+				<Hero />
+				<InstitutionLogos />
+				<ActionButtons />
+			</main>
+		</section>
+
+		<!-- Content Sections -->
+		<section class="py-8">
+			<div class="max-w-6xl mx-auto px-8">
+				<Abstract />
+				<div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+					<div
+						class="relative w-full"
+						style="padding-bottom: 56.25%; /* 16:9 aspect ratio */"
+					>
+						<iframe
+							class="absolute top-0 left-0 w-full h-full rounded-lg"
+							src="https://www.youtube.com/embed/n129VDqJCk4?si=Z6MK8TG0iA88Ycbb"
+							title="InternVLA-M1 Demo Video"
+							frameborder="0"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+							referrerpolicy="strict-origin-when-cross-origin"
+							allowfullscreen
+						>
+						</iframe>
+					</div>
+				</div>
+				<ModelOverview />
+				<SimDataSection />
+				<ReasoningDemo />
+			</div>
+		</section>
+
+		<!-- Results Section -->
+		<ResultsSection />
+
+		<!-- InternVLA-M1 System 2 Spatial Grounding Results -->
+		<System2Showcase />
+
+		<!-- Data Distribution Section -->
+		<DataDistribution />
+
+		<!-- Reference Section -->
+		<section class="py-8">
+			<div class="max-w-6xl mx-auto px-8">
+				<Reference />
+			</div>
+		</section>
+	</body>
+</html>

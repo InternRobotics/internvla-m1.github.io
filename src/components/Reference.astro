@@ -1,0 +1,136 @@
+---
+// Reference component with copy button for citation
+---
+
+<style>
+	.copy-button {
+		transition: all 0.2s ease-in-out;
+	}
+	.copy-button:hover {
+		transform: scale(1.05);
+	}
+	.copy-success {
+		color: #10b981;
+	}
+	.citation-text {
+		font-family: "Courier New", monospace;
+		background-color: #f9fafb;
+		border: 1px solid #e5e7eb;
+		border-radius: 6px;
+		padding: 12px;
+		white-space: pre-line;
+		overflow-x: auto;
+		font-size: 0.8rem;
+		line-height: 1.4;
+	}
+</style>
+
+<section class="bg-white rounded-lg shadow-sm p-4 mb-6 max-w-6xl mx-auto">
+	<h2 class="text-xl font-bold text-gray-900 mb-3 text-center">Reference</h2>
+
+	<div class="relative">
+		<!-- Citation Text -->
+		<div class="citation-text text-gray-800 mb-3">
+			@article{`{`}2025internvlam1,<br />
+			&nbsp;&nbsp;title = {`{`}InternVLA-M1: Latent Spatial Grounding for
+			Instruction-Following Robotic Manipulation{`}`},<br />
+			&nbsp;&nbsp;author = {`{`}Intern Robotics{`}`},<br />
+			&nbsp;&nbsp;booktitle = {`{`}Arxiv{`}`},<br />
+			&nbsp;&nbsp;year = {`{`}2025{`}`},<br />
+			{`}`}
+		</div>
+
+		<!-- Copy Button -->
+		<div class="flex justify-center">
+			<button
+				id="copy-button"
+				class="copy-button bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 px-3 py-1.5 rounded-md text-sm font-medium hover:border-gray-400 transition-all duration-300 flex items-center gap-1.5 shadow-sm"
+			>
+				<svg
+					id="copy-icon"
+					class="w-3.5 h-3.5"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+					></path>
+				</svg>
+				<svg
+					id="check-icon"
+					class="w-3.5 h-3.5 hidden copy-success"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M5 13l4 4L19 7"></path>
+				</svg>
+				<span id="button-text">Copy Citation</span>
+			</button>
+		</div>
+	</div>
+</section>
+
+<script>
+	const citationText = `@article{2025internvlam1,
+  title = {InternVLA-M1: Latent Spatial Grounding for Instruction-Following Robotic Manipulation},
+  author = {Intern Robotics},
+  booktitle = {Arxiv},
+  year = {2025},
+}`;
+
+	const copyButton = document.getElementById("copy-button");
+	const copyIcon = document.getElementById("copy-icon");
+	const checkIcon = document.getElementById("check-icon");
+	const buttonText = document.getElementById("button-text");
+
+	copyButton?.addEventListener("click", async () => {
+		try {
+			await navigator.clipboard.writeText(citationText);
+
+			// Show success state
+			copyIcon?.classList.add("hidden");
+			checkIcon?.classList.remove("hidden");
+			buttonText!.textContent = "Copied!";
+			copyButton.classList.add("copy-success");
+
+			// Reset after 2 seconds
+			setTimeout(() => {
+				copyIcon?.classList.remove("hidden");
+				checkIcon?.classList.add("hidden");
+				buttonText!.textContent = "Copy Citation";
+				copyButton.classList.remove("copy-success");
+			}, 2000);
+		} catch (err) {
+			// Fallback for older browsers
+			const textArea = document.createElement("textarea");
+			textArea.value = citationText;
+			document.body.appendChild(textArea);
+			textArea.select();
+			document.execCommand("copy");
+			document.body.removeChild(textArea);
+
+			// Show success state
+			copyIcon?.classList.add("hidden");
+			checkIcon?.classList.remove("hidden");
+			buttonText!.textContent = "Copied!";
+			copyButton.classList.add("copy-success");
+
+			// Reset after 2 seconds
+			setTimeout(() => {
+				copyIcon?.classList.remove("hidden");
+				checkIcon?.classList.add("hidden");
+				buttonText!.textContent = "Copy Citation";
+				copyButton.classList.remove("copy-success");
+			}, 2000);
+		}
+	});
+</script>

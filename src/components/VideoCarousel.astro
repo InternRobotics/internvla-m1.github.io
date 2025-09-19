@@ -1,0 +1,234 @@
+---
+// Pure Video Carousel component for displaying video demonstrations with carousel functionality
+
+export interface VideoItem {
+	title: string;
+	src: string;
+	description?: string;
+	autoplay?: boolean;
+}
+
+const videos = Astro.props.videos as VideoItem[];
+const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
+---
+
+<style>
+	.carousel-container {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.carousel-wrapper {
+		display: flex;
+		transition: transform 0.5s ease-in-out;
+	}
+
+	.carousel-slide {
+		min-width: 100%;
+		flex-shrink: 0;
+	}
+
+	.carousel-nav {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		background: rgba(255, 255, 255, 0.8);
+		border: none;
+		border-radius: 50%;
+		width: 48px;
+		height: 48px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		transition: all 0.3s ease;
+		z-index: 10;
+	}
+
+	.carousel-nav:hover {
+		background: rgba(255, 255, 255, 0.95);
+	}
+
+	.carousel-nav:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	.carousel-nav.prev {
+		left: 10px;
+	}
+
+	.carousel-nav.next {
+		right: 10px;
+	}
+
+	.carousel-indicators {
+		display: flex;
+		justify-content: center;
+		gap: 8px;
+		margin-top: 20px;
+	}
+
+	.indicator {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		background: #d1d5db;
+		cursor: pointer;
+		transition: background 0.3s ease;
+	}
+
+	.indicator.active {
+		background: #3b82f6;
+	}
+
+	video {
+		display: block;
+	}
+</style>
+
+<div class="carousel-container" id={`videoCarousel-${carouselId}`}>
+	<div class="carousel-wrapper" id={`carouselWrapper-${carouselId}`}>
+		{
+			videos.map((video, index) => (
+				<div class="carousel-slide">
+					<h3 class="text-xl font-bold text-gray-900 mb-4 text-center">
+						{video.title}
+					</h3>
+					<video
+						{...(video.autoplay && { autoplay: true })}
+						loop
+						muted
+						playsinline
+						class="w-full max-w-4xl mx-auto rounded-lg"
+						data-index={index}
+					>
+						<source src={video.src} type="video/mp4" />
+						Your browser does not support the video tag.
+					</video>
+					{video.description && (
+						<p class="text-gray-600 mt-4 text-center text-lg">
+							{video.description}
+						</p>
+					)}
+				</div>
+			))
+		}
+	</div>
+
+	<!-- Navigation Buttons -->
+	<button class="carousel-nav prev" id={`prevBtn-${carouselId}`}>
+		<svg
+			class="w-5 h-5"
+			fill="none"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M15 19l-7-7 7-7"></path>
+		</svg>
+	</button>
+	<button class="carousel-nav next" id={`nextBtn-${carouselId}`}>
+		<svg
+			class="w-5 h-5"
+			fill="none"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+		>
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M9 5l7 7-7 7"></path>
+		</svg>
+	</button>
+
+	<!-- Indicators -->
+	<div class="carousel-indicators">
+		{
+			videos.map((_, index) => (
+				<div
+					class={`indicator ${index === 0 ? "active" : ""}`}
+					data-index={index}
+				/>
+			))
+		}
+	</div>
+</div>
+
+<script define:vars={{ videos, carouselId }}>
+	document.addEventListener("DOMContentLoaded", function () {
+		// Find the specific carousel container using the known ID
+		const container = document.getElementById(
+			`videoCarousel-${carouselId}`,
+		);
+
+		if (!container) return;
+
+		const wrapper = document.getElementById(
+			`carouselWrapper-${carouselId}`,
+		);
+		const prevBtn = document.getElementById(`prevBtn-${carouselId}`);
+		const nextBtn = document.getElementById(`nextBtn-${carouselId}`);
+		const indicators = container.querySelectorAll(".indicator");
+		const videoElements = container.querySelectorAll("video[data-index]");
+
+		let currentIndex = 0;
+		const totalSlides = videos.length;
+
+		function updateCarousel() {
+			if (!wrapper) return;
+			const translateX = -currentIndex * 100;
+			wrapper.style.transform = `translateX(${translateX}%)`;
+
+			// Update indicators
+			indicators.forEach((indicator, index) => {
+				indicator.classList.toggle("active", index === currentIndex);
+			});
+
+			// Update button states
+			if (prevBtn) prevBtn.disabled = currentIndex === 0;
+			if (nextBtn) nextBtn.disabled = currentIndex === totalSlides - 1;
+
+			// Handle video playback
+			videoElements.forEach((video, index) => {
+				if (index === currentIndex) {
+					// Play current video
+					video.currentTime = 0; // Reset to beginning
+					video
+						.play()
+						.catch((e) => console.log("Video play failed:", e));
+				} else {
+					// Pause other videos
+					video.pause();
+				}
+			});
+		}
+
+		function goToSlide(index) {
+			currentIndex = Math.max(0, Math.min(index, totalSlides - 1));
+			updateCarousel();
+		}
+
+		// Navigation button events
+		if (prevBtn)
+			prevBtn.addEventListener("click", () =>
+				goToSlide(currentIndex - 1),
+			);
+		if (nextBtn)
+			nextBtn.addEventListener("click", () =>
+				goToSlide(currentIndex + 1),
+			);
+
+		// Indicator events
+		indicators.forEach((indicator, index) => {
+			indicator.addEventListener("click", () => goToSlide(index));
+		});
+
+		// Initialize
+		updateCarousel();
+	});
+</script>

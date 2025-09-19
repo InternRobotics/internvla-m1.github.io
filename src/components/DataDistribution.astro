@@ -1,0 +1,60 @@
+---
+// DataDistribution component using DonutChart
+import DonutChart from "./DonutChart.astro";
+
+// Data based on your specifications
+const distributionData = {
+	inner: [
+		{
+			label: "General VQA",
+			value: 637,
+			color: "#3b82f6", // Blue
+		},
+		{
+			label: "Spatial Grounding QA",
+			value: 2395,
+			color: "#f59e0b", // Orange/Yellow
+		},
+	],
+	outer: [
+		{
+			label: "VQA",
+			value: 637,
+			color: "#06b6d4", // Teal
+		},
+		{
+			label: "Trajectory-QA",
+			value: 684,
+			color: "#eab308", // Yellow
+		},
+		{
+			label: "Point-QA",
+			value: 832,
+			color: "#ea580c", // Orange
+		},
+		{
+			label: "BOX-QA",
+			value: 879,
+			color: "#dc2626", // Red
+		},
+	],
+};
+---
+
+<section class="py-8">
+	<div class="max-w-6xl mx-auto px-8">
+		<h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+			VLM Pre-training Data Distribution
+		</h2>
+		<p class="text-gray-600 text-center mb-8 text-lg">
+			Comprehensive dataset composition for spatial grounding pre-training
+		</p>
+
+		<DonutChart
+			title=""
+			centerTitle="Pre-training Data"
+			centerValue="3,032K"
+			data={distributionData}
+		/>
+	</div>
+</section>

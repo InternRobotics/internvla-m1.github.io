@@ -1,0 +1,626 @@
+---
+// System2 Spatial Reasoning Results Showcase Component
+// Displays Box/Point/Trace spatial reasoning results
+
+import { getAssetPath } from "../utils/assetPath";
+
+interface ImageData {
+    src: string;
+    alt: string;
+    description: string;
+}
+
+// Box Detection Images Metadata
+const boxDetectionImages: ImageData[] = [
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/0000002.png__could you please give me the glue stick..png",
+        ),
+        alt: "Glue stick detection",
+        description: "could you please give me the glue stick.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/23.jpg__Indicate points within the vacant area that lies between the blue cup and the teal bowl on the table..png",
+        ),
+        alt: "Table area detection",
+        description:
+            "Indicate points within the vacant area that lies between the blue cup and the teal bowl on the table.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/COCO_train2014_000000280191.jpg__a girl sitting on a bench near a boy..png",
+        ),
+        alt: "Person detection",
+        description: "a girl sitting on a bench near a boy.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/COCO_train2014_000000487992.jpg__the lady on the right with the red necktie..png",
+        ),
+        alt: "Lady detection",
+        description: "the lady on the right with the red necktie.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/COCO_train2014_000000533220.jpg__a bush of plant behind middle woman..png",
+        ),
+        alt: "Plant detection",
+        description: "a bush of plant behind middle woman.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/frame_idx_0.png__What is the closest object to cabinet_.png",
+        ),
+        alt: "Cabinet object detection",
+        description: "What is the closest object to cabinet?",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/frame_idx_0.png__What is the oval-shaped, charcoal gray object around the vintage camera..png",
+        ),
+        alt: "Camera object detection",
+        description:
+            "What is the oval-shaped, charcoal gray object around the vintage camera.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/obs_camera_20250826_144739_0027.jpg__Put the bun on the plate.png",
+        ),
+        alt: "Food detection",
+        description: "Put the bun on the plate.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/obs_camera_20250826_145253_0511.jpg__Put the lettuce on the plate..png",
+        ),
+        alt: "Lettuce detection",
+        description: "Put the lettuce on the plate.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/obs_camera_20250827_150928_0445.jpg__put the grapes on the basket..png",
+        ),
+        alt: "Grapes detection",
+        description: "put the grapes on the basket.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_bbox/obs_camera_20250828_214504_0137.jpg__Put the pear in the white basket..png",
+        ),
+        alt: "Pear detection",
+        description: "Put the pear in the white basket.",
+    },
+];
+
+// Point Localization Images Metadata
+const pointLocalizationImages: ImageData[] = [
+    {
+        src: getAssetPath(
+            "pic/vis_point/0000616.png__I want to get the large toothpaste box..png",
+        ),
+        alt: "Toothpaste point",
+        description: "I want to get the large toothpaste box.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/0000617.png__could you find the light brown lion..png",
+        ),
+        alt: "Lion point",
+        description: "could you find the light brown lion.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/0000618.png__I hope to get the small blue oblong box..png",
+        ),
+        alt: "Blue box point",
+        description: "I hope to get the small blue oblong box.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/24.jpg__Locate points within the unoccupied space that lies before the leftmost fruit on the table..png",
+        ),
+        alt: "Fruit area points",
+        description:
+            "Locate points within the unoccupied space that lies before the leftmost fruit on the table.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/COCO_train2014_000000329502.jpg__a toddler in gray pants and a striped shirt..png",
+        ),
+        alt: "Toddler point",
+        description: "a toddler in gray pants and a striped shirt.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/COCO_train2014_000000445628.jpg__a small bird hanging on the net..png",
+        ),
+        alt: "Bird point",
+        description: "a small bird hanging on the net.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/COCO_train2014_000000548416.jpg__soup with chicken and carrots and yellow broth..png",
+        ),
+        alt: "Soup point",
+        description: "soup with chicken and carrots and yellow broth.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/frame_idx_0.png__What on the table is used for computing tasks_.png",
+        ),
+        alt: "Computing point",
+        description: "What on the table is used for computing tasks?",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/images_000257.jpg__press the blue botton..png",
+        ),
+        alt: "Button point",
+        description: "press the blue botton.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/obs_camera_20250826_145253_0511.jpg__Put the lettuce on the plate..png",
+        ),
+        alt: "Lettuce point",
+        description: "Put the lettuce on the plate.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/obs_camera_20250827_150928_0445.jpg__put the grapes on the basket..png",
+        ),
+        alt: "Grapes point",
+        description: "put the grapes on the basket.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/obs_camera_20250827_150928_1141.jpg__put the eggplant on the purple plate..png",
+        ),
+        alt: "Eggplant point",
+        description: "put the eggplant on the purple plate.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_point/obs_camera_20250828_214504_0137.jpg__Put the pear in the white basket..png",
+        ),
+        alt: "Pear point",
+        description: "Put the pear in the white basket.",
+    },
+];
+
+// Trajectory Prediction Images Metadata
+const trajectoryPredictionImages: ImageData[] = [
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/close bottom drawer_frame0.png__close the bottom drawer..png",
+        ),
+        alt: "Close drawer trajectory",
+        description: "close the bottom drawer.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/close mid drawer_frame0.png__close the drawer..png",
+        ),
+        alt: "Close mid drawer trajectory",
+        description: "close the drawer.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/close top drawer_frame0.png__close the drawer..png",
+        ),
+        alt: "Close top drawer trajectory",
+        description: "close the drawer.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/obs_camera_20250826_144739_0027.jpg__Put the bun on the plate.png",
+        ),
+        alt: "Bun trajectory",
+        description: "Put the bun on the plate.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/obs_camera_20250826_145253_0511.jpg__Put the lettuce on the plate..png",
+        ),
+        alt: "Lettuce trajectory",
+        description: "Put the lettuce on the plate.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/obs_camera_20250827_150928_0445.jpg__put the grapes on the basket..png",
+        ),
+        alt: "Grapes trajectory",
+        description: "put the grapes on the basket.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/obs_camera_20250828_214504_0137.jpg__Put the pear in the white basket..png",
+        ),
+        alt: "Pear trajectory",
+        description: "Put the pear in the white basket.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/open_mid_drawer_frame0.png__open the middle drawer..png",
+        ),
+        alt: "Open drawer trajectory",
+        description: "open the middle drawer.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/open_mid_drawer2_frame0.png__open the middle drawer..png",
+        ),
+        alt: "Open drawer 2 trajectory",
+        description: "open the middle drawer.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/pick coke_frame0.png__put the coke on the front side of the table..png",
+        ),
+        alt: "Coke trajectory",
+        description: "put the coke on the front side of the table.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/pick coke2_frame0.png__put coke..png",
+        ),
+        alt: "Coke 2 trajectory",
+        description: "put coke.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/place apple into top drawer2_frame0.png__place apple into top drawer..png",
+        ),
+        alt: "Apple trajectory",
+        description: "place apple into top drawer.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/put carrot on plate_frame0.png__put carrot on plate..png",
+        ),
+        alt: "Carrot trajectory",
+        description: "put carrot on plate.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/put eggplant into yellow basket2_frame0.png__put eggplant into yellow basket..png",
+        ),
+        alt: "Eggplant basket trajectory",
+        description: "put eggplant into yellow basket.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/put the spoon on the towel2_frame0.png__put the spoon on the towel..png",
+        ),
+        alt: "Spoon trajectory",
+        description: "put the spoon on the towel.",
+    },
+    {
+        src: getAssetPath(
+            "pic/vis_traj/end/stack the green block on the yellow block_frame0.png__stack the green block on the yellow one..png",
+        ),
+        alt: "Block stacking trajectory",
+        description: "stack the green block on the yellow one.",
+    },
+];
+
+// Function to shuffle array randomly
+function shuffleArray<T>(array: T[]): T[] {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
+
+// Shuffle all image arrays for random display order
+const shuffledBoxDetectionImages = shuffleArray(boxDetectionImages);
+const shuffledPointLocalizationImages = shuffleArray(pointLocalizationImages);
+const shuffledTrajectoryPredictionImages = shuffleArray(
+    trajectoryPredictionImages,
+);
+---
+
+<style>
+    .carousel-container {
+        overflow-x: hidden;
+        margin: 1.5rem 0;
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .carousel-track {
+        display: flex;
+        animation: scroll-horizontal 60s linear infinite;
+        width: max-content;
+    }
+
+    .carousel-track:hover {
+        animation-play-state: paused;
+    }
+
+    @keyframes scroll-horizontal {
+        0% {
+            transform: translateX(0);
+        }
+        100% {
+            transform: translateX(-50%);
+        }
+    }
+
+    .image-item {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-right: 1rem;
+        flex-shrink: 0;
+        width: 300px;
+    }
+
+    .image-item img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .image-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+        color: white;
+        padding: 0.75rem;
+        font-size: 0.8rem;
+        font-style: italic;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .image-item:hover .image-overlay {
+        opacity: 1;
+    }
+
+    .category-section {
+        margin-bottom: 3rem;
+    }
+
+    .category-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #374151;
+    }
+
+    .category-description {
+        color: #6b7280;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Modal styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+    }
+
+    .modal-content {
+        margin: auto;
+        display: block;
+        width: 80%;
+        max-width: 700px;
+        max-height: 80%;
+        object-fit: contain;
+    }
+
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    .close:hover {
+        color: #bbb;
+    }
+
+    /* 强制宽度限制 */
+    .system2-container {
+        max-width: 72rem !important; /* 强制6xl宽度 */
+        width: 100% !important;
+        margin: 0 auto !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+
+    .force-width {
+        max-width: 100% !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
+    }
+</style>
+
+<h2 class="text-3xl font-bold text-gray-900 mb-4 text-center">
+    System2 Spatial Reasoning Results
+</h2>
+<p class="text-gray-600 text-center mb-8 text-lg">
+    Demonstrating InternVLA's System 2 capabilities in box detection, point
+    localization, and visual trace prediction.
+</p>
+<div class="system2-container">
+    <section class="bg-white rounded-lg shadow-sm p-6 mb-6 force-width">
+        <div class="category-section">
+            <h3 class="category-title">📦 Box Detection</h3>
+            <p class="category-description">
+                Precise bounding box detection and object localization
+            </p>
+
+            <div class="carousel-container">
+                <div class="carousel-track">
+                    {
+                        shuffledBoxDetectionImages.map((image) => (
+                            <div
+                                class="image-item"
+                                onclick={`openModal('${image.src}')`}
+                            >
+                                <img src={image.src} alt={image.alt} />
+                                <div class="image-overlay">
+                                    "{image.description}"
+                                </div>
+                            </div>
+                        ))
+                    }
+                    {/* Duplicate set for infinite scroll */}
+                    {
+                        shuffledBoxDetectionImages.map((image) => (
+                            <div
+                                class="image-item"
+                                onclick={`openModal('${image.src}')`}
+                            >
+                                <img src={image.src} alt={image.alt} />
+                                <div class="image-overlay">
+                                    "{image.description}"
+                                </div>
+                            </div>
+                        ))
+                    }
+                </div>
+            </div>
+
+            <!-- Point Localization Category -->
+            <div class="category-section">
+                <h3 class="category-title">📍 Point Localization</h3>
+                <p class="category-description">
+                    Precise keypoint localization and spatial analysis
+                </p>
+
+                <div class="carousel-container">
+                    <div class="carousel-track">
+                        {
+                            shuffledPointLocalizationImages.map((image) => (
+                                <div
+                                    class="image-item"
+                                    onclick={`openModal('${image.src}')`}
+                                >
+                                    <img src={image.src} alt={image.alt} />
+                                    <div class="image-overlay">
+                                        "{image.description}"
+                                    </div>
+                                </div>
+                            ))
+                        }
+                        {/* Duplicate set for infinite scroll */}
+                        {
+                            shuffledPointLocalizationImages.map((image) => (
+                                <div
+                                    class="image-item"
+                                    onclick={`openModal('${image.src}')`}
+                                >
+                                    <img src={image.src} alt={image.alt} />
+                                    <div class="image-overlay">
+                                        "{image.description}"
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trajectory Prediction Category -->
+            <div class="category-section">
+                <h3 class="category-title">📈 Trajectory Prediction</h3>
+                <p class="category-description">
+                    Intelligent trajectory prediction and motion path planning
+                </p>
+
+                <div class="carousel-container">
+                    <div class="carousel-track">
+                        {
+                            shuffledTrajectoryPredictionImages.map((image) => (
+                                <div
+                                    class="image-item"
+                                    onclick={`openModal('${image.src}')`}
+                                >
+                                    <img src={image.src} alt={image.alt} />
+                                    <div class="image-overlay">
+                                        "{image.description}"
+                                    </div>
+                                </div>
+                            ))
+                        }
+                        {/* Duplicate set for infinite scroll */}
+                        {
+                            shuffledTrajectoryPredictionImages.map((image) => (
+                                <div
+                                    class="image-item"
+                                    onclick={`openModal('${image.src}')`}
+                                >
+                                    <img src={image.src} alt={image.alt} />
+                                    <div class="image-overlay">
+                                        "{image.description}"
+                                    </div>
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for image viewing -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage" />
+    </div>
+
+    <script>
+        function openModal(imageSrc: string) {
+            const modal = document.getElementById("imageModal") as HTMLElement;
+            const modalImg = document.getElementById(
+                "modalImage",
+            ) as HTMLImageElement;
+            if (modal && modalImg) {
+                modal.style.display = "block";
+                modalImg.src = imageSrc;
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("imageModal") as HTMLElement;
+            if (modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        // Close modal when clicking outside the image
+        window.onclick = function (event: MouseEvent) {
+            const modal = document.getElementById("imageModal") as HTMLElement;
+            if (modal && event.target === modal) {
+                modal.style.display = "none";
+            }
+        };
+
+        // Close modal with ESC key
+        document.addEventListener("keydown", function (event: KeyboardEvent) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+    </script>
+</div>
